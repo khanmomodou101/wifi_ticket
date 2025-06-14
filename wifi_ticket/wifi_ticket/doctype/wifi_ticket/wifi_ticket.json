@@ -1,0 +1,146 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:TCKT-{YYYY}-{###}",
+ "creation": "2025-06-14 17:43:53.488772",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "attendee_section",
+  "ticket_type",
+  "phone",
+  "column_break_gxrn",
+  "ticket_code",
+  "section_break_fdwk",
+  "payment_method",
+  "receipt",
+  "reference_id",
+  "payment_status",
+  "column_break_jfoy",
+  "wave_session_id",
+  "wave_payment_link"
+ ],
+ "fields": [
+  {
+   "fieldname": "attendee_section",
+   "fieldtype": "Section Break",
+   "label": "Attendee"
+  },
+  {
+   "fieldname": "ticket_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Ticket Type",
+   "options": "daily\nweekly\nmonthly",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "column_break_gxrn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ticket_code",
+   "fieldtype": "Data",
+   "label": "Ticket Code"
+  },
+  {
+   "fieldname": "section_break_fdwk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payment_method",
+   "fieldtype": "Select",
+   "label": "Payment Method",
+   "options": "cash\nwave\nbank"
+  },
+  {
+   "depends_on": "eval:doc.payment_method=='bank'",
+   "fieldname": "receipt",
+   "fieldtype": "Attach",
+   "label": "Receipt"
+  },
+  {
+   "fieldname": "reference_id",
+   "fieldtype": "Data",
+   "label": "Reference ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Unpaid\nPaid\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_jfoy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "wave_session_id",
+   "fieldtype": "Data",
+   "label": "Wave Session ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wave_payment_link",
+   "fieldtype": "Data",
+   "label": "Wave Payment Link",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-06-14 17:57:02.475775",
+ "modified_by": "Administrator",
+ "module": "Wifi Ticket",
+ "name": "Wifi Ticket",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Orange",
+   "title": "Unused"
+  },
+  {
+   "color": "Green",
+   "title": "Used"
+  }
+ ]
+}
