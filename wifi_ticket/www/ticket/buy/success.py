@@ -28,7 +28,7 @@ def get_context(context):
                 frappe.logger().debug(f"Setting payment status to Paid for ticket: {ticket.name}")
                 
                 # Update ticket status
-                ticket.db_set('status', 'Paid')
+                ticket.db_set('payment_status', 'Paid')
                 frappe.db.commit()
                 
                 frappe.logger().debug("Payment status updated successfully")
