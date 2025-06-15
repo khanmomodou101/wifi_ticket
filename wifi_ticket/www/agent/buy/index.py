@@ -3,6 +3,10 @@ from frappe.utils import random_string
 import random
 
 def get_context(context):
+    if frappe.session.user == "Guest":
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = "/login"
+        return
     frappe.clear_cache()
     
     ticket_id = frappe.request.args.get("id")
