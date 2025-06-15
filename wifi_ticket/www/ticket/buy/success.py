@@ -15,7 +15,7 @@ def get_context(context):
                 frappe.throw("Ticket not found")
             
             ticket = frappe.get_doc('Wifi Ticket', {'reference_id': reference_id})
-            sms_response = send_sms(ticket.phone, ticket.ticket_code)
+            
             
             # Add logging to debug payment status
             frappe.logger().debug(f"Checking payment status for ticket: {ticket.name}")
@@ -49,6 +49,7 @@ def get_context(context):
         ticket = None
 
     context.ticket = ticket
+    context.ticket_code = frappe.db.get_value("Wifi Ticket", {"reference_id": reference_id}, "ticket_code")
     return context
 
 @frappe.whitelist(allow_guest=True)
