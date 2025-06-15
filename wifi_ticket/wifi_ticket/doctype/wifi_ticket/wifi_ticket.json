@@ -11,6 +11,7 @@
   "phone",
   "column_break_gxrn",
   "ticket_code",
+  "agent",
   "section_break_fdwk",
   "payment_method",
   "receipt",
@@ -93,12 +94,18 @@
    "fieldtype": "Data",
    "label": "Wave Payment Link",
    "read_only": 1
+  },
+  {
+   "fieldname": "agent",
+   "fieldtype": "Data",
+   "label": "Agent",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-14 17:57:02.475775",
+ "modified": "2025-06-15 16:06:37.783733",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Wifi Ticket",

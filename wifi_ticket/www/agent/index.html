@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceesay Net - WiFi Ticket Purchase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .provider-name {
+            font-size: 32px;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        .ticket-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .ticket-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .ticket-card.selected {
+            border-color: #3498db;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .duration {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 32px;
+            color: #3498db;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .price::before {
+            content: "GMD ";
+            font-size: 20px;
+            color: #7f8c8d;
+        }
+
+        .buy-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .buy-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .selected-ticket {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+            border: 1px solid #e0e0e0;
+        }
+
+        .selected-ticket h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .selected-ticket p {
+            color: #34495e;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .selected-ticket span {
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .provider-name {
+                font-size: 24px;
+            }
+            
+            .ticket-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="provider-name">Ceesay Net</div>
+            <div class="subtitle">High-Speed WiFi Solutions</div>
+        </div>
+
+        <div class="ticket-options">
+            <div class="ticket-card">
+                <div class="duration">1 Day</div>
+                <div class="price">25</div>
+                <button class="buy-button" onclick="window.location.href='/agent/buy?id=daily'">Select Plan</button>
+            </div>
+
+            <div class="ticket-card">
+                <div class="duration">1 Week</div>
+                <div class="price">150</div>
+                <button class="buy-button" onclick="window.location.href='/agent/buy?id=weekly'">Select Plan</button>
+            </div>
+
+            <div class="ticket-card">
+                <div class="duration">1 Month</div>
+                <div class="price">350</div>
+                <button class="buy-button" onclick="window.location.href='/agent/buy?id=monthly'">Select Plan</button>
+            </div>
+        </div>
+
+        <div id="selected-ticket" class="selected-ticket">
+            <h3>Selected Plan</h3>
+            <p>Provider: <span>Ceesay Net</span></p>
+            <p>Duration: <span id="selected-duration"></span></p>
+            <p>Price: <span id="selected-price"></span> Dalasis</p>
+            <button class="buy-button" style="margin-top: 20px;" onclick="proceedToBuy()">Proceed to Buy</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedPlanId = '';
+
+        function selectTicket(element, duration, price, planId) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.ticket-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selected class to clicked card
+            element.classList.add('selected');
+
+            // Update selected ticket information
+            const selectedTicket = document.getElementById('selected-ticket');
+            document.getElementById('selected-duration').textContent = duration;
+            document.getElementById('selected-price').textContent = price;
+            selectedTicket.style.display = 'block';
+            
+            // Store the selected plan ID
+            selectedPlanId = planId;
+        }
+
+        function proceedToBuy() {
+            if (selectedPlanId) {
+                window.location.href = `/agent/buy?id=${selectedPlanId}`;
+            }
+        }
+    </script>
+</body>
+</html>

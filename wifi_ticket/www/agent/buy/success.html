@@ -1,0 +1,269 @@
+{% extends "templates/web.html" %}
+
+{% block header %}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceesay Net - Purchase Successful</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .success-title {
+            color: #2c3e50;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .wifi-code-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .wifi-code-label {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .wifi-code {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .copy-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .copy-button svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .plan-details {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .home-button {
+            margin-top: 30px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .home-button:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .success-title {
+                font-size: 24px;
+            }
+            
+            .wifi-code {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+        </div>
+
+        <h1 class="success-title">WiFi Code Generated!</h1>
+        <p class="success-message">The WiFi code has been sent to the recipient's phone number.</p>
+
+        <div class="wifi-code-container">
+            <div class="wifi-code-label">WiFi Code</div>
+            <div class="wifi-code" id="wifi-code"></div>
+            <button class="copy-button" onclick="copyWifiCode()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+                Copy Code
+            </button>
+        </div>
+
+        <div class="plan-details">
+            <div class="detail-row">
+                <span>Plan Duration</span>
+                <span class="detail-value" id="plan-duration">1 Day</span>
+            </div>
+            <div class="detail-row">
+                <span>Valid Until</span>
+                <span class="detail-value" id="valid-until">2024-03-21 23:59</span>
+            </div>
+        </div>
+
+        <a href="/agent" class="home-button">Back to Home</a>
+    </div>
+
+    <script>
+        // Get details from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planId = urlParams.get('id');
+        const phone = urlParams.get('phone');
+        const ticketCode = urlParams.get('ticket_code');
+
+        // Plan details mapping
+        const planDetails = {
+            'daily': {
+                duration: '1 Day',
+                validUntil: getValidUntil(1)
+            },
+            'weekly': {
+                duration: '1 Week',
+                validUntil: getValidUntil(7)
+            },
+            'monthly': {
+                duration: '1 Month',
+                validUntil: getValidUntil(30)
+            }
+        };
+
+        // Update details on page load
+        window.onload = function() {
+            if (planId && planDetails[planId]) {
+                document.getElementById('plan-duration').textContent = planDetails[planId].duration;
+                document.getElementById('valid-until').textContent = planDetails[planId].validUntil;
+            }
+            if (ticketCode) {
+                document.getElementById('wifi-code').textContent = ticketCode;
+            }
+        };
+
+        function getValidUntil(days) {
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function copyWifiCode() {
+            const wifiCode = document.getElementById('wifi-code').textContent;
+            if (wifiCode) {
+                navigator.clipboard.writeText(wifiCode).then(() => {
+                    const button = document.querySelector('.copy-button');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>Copied!';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

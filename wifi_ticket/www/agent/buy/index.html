@@ -1,0 +1,253 @@
+{% extends "templates/web.html" %}
+
+
+{% block header %}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceesay Net - Agent Purchase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .provider-name {
+            font-size: 32px;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .agent-badge {
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .plan-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .plan-details h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .submit-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .provider-name {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="provider-name">Ceesay Net</div>
+            <div class="agent-badge">Agent Mode</div>
+        </div>
+
+        <div class="plan-details">
+            <h2>Selected Plan Details</h2>
+            <div class="detail-row">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value" id="plan-duration"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Price</span>
+                <span class="detail-value" id="plan-price"></span>
+            </div>
+        </div>
+
+        <form id="purchase-form" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="phone">Recipient Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter recipient's phone number" required pattern="[0-9]{7,10}">
+            </div>
+            <button type="submit" class="submit-button">Generate WiFi Code</button>
+        </form>
+    </div>
+
+    <script>
+        // Get plan details from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planId = urlParams.get('id');
+
+        // Plan details mapping
+        const planDetails = {
+            'daily': {
+                duration: '1 Day',
+                price: '25 Dalasis'
+            },
+            'weekly': {
+                duration: '1 Week',
+                price: '150 Dalasis'
+            },
+            'monthly': {
+                duration: '1 Month',
+                price: '350 Dalasis'
+            }
+        };
+
+        // Update plan details on page load
+        window.onload = function() {
+            if (planId && planDetails[planId]) {
+                document.getElementById('plan-duration').textContent = planDetails[planId].duration;
+                document.getElementById('plan-price').textContent = planDetails[planId].price;
+            } else {
+                window.location.href = '../index.html';
+            }
+        };
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const phone = document.getElementById('phone').value;
+            const submitButton = document.querySelector('.submit-button');
+            
+            // Disable button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+
+            // Call the buy_ticket function
+            frappe.call({
+                method: 'wifi_ticket.utils.buy_ticket',
+                args: {
+                    phone: phone,
+                    plan: planId
+                },
+                callback: function(response) {
+                    if (response.message && response.message.status === 'success') {
+                        // Redirect to success page with the ticket code
+                        window.location.href = `success.html?id=${planId}&phone=${phone}&ticket_code=${response.message.ticket_code}`;
+                    } else {
+                        // Show error message
+                        alert(response.message.message || 'Error generating WiFi code. Please try again.');
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Generate WiFi Code';
+                    }
+                },
+                error: function(err) {
+                    console.error('Error:', err);
+                    alert('Error generating WiFi code. Please try again.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Generate WiFi Code';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+{% endblock %}
