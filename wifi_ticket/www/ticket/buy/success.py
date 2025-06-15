@@ -11,6 +11,8 @@ def get_context(context):
     reference_id = frappe.request.args.get('ref')
     if reference_id:
         try:
+            if not frappe.db.exists('Wifi Ticket', {'reference_id': reference_id}):
+                frappe.throw("Ticket not found")
             
             ticket = frappe.get_doc('Wifi Ticket', {'reference_id': reference_id})
             sms_response = send_sms(ticket.phone, ticket.ticket_code)
