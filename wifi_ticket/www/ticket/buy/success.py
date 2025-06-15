@@ -47,6 +47,7 @@ def get_context(context):
         ticket = None
 
     context.ticket = ticket
+    return context
 
 @frappe.whitelist(allow_guest=True)
 def download_ticket(ref):
