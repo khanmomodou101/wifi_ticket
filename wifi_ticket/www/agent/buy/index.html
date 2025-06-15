@@ -229,8 +229,8 @@
                 },
                 callback: function(response) {
                     if (response.message && response.message.status === 'success') {
-                        // Redirect to success page with the ticket code
-                        window.location.href = `success.html?id=${planId}&phone=${phone}&ticket_code=${response.message.ticket_code}`;
+                        // Redirect to success page with reference_id
+                        window.location.href = `success.html?ref=${response.message.reference_id}`;
                     } else {
                         // Show error message
                         alert(response.message.message || 'Error generating WiFi code. Please try again.');

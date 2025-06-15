@@ -181,7 +181,7 @@
 
         <div class="wifi-code-container">
             <div class="wifi-code-label">WiFi Code</div>
-            <div class="wifi-code" id="wifi-code"></div>
+            <div class="wifi-code" id="wifi-code">{{ ticket_code }}</div>
             <button class="copy-button" onclick="copyWifiCode()">
                 <svg viewBox="0 0 24 24">
                     <path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8C6.9 5 6 5.9 6 7v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
@@ -193,11 +193,11 @@
         <div class="plan-details">
             <div class="detail-row">
                 <span>Plan Duration</span>
-                <span class="detail-value" id="plan-duration">1 Day</span>
+                <span class="detail-value">{{ ticket.ticket_type }}</span>
             </div>
             <div class="detail-row">
-                <span>Valid Until</span>
-                <span class="detail-value" id="valid-until">2024-03-21 23:59</span>
+                <span>Phone Number</span>
+                <span class="detail-value">{{ ticket.phone }}</span>
             </div>
         </div>
 
@@ -205,51 +205,6 @@
     </div>
 
     <script>
-        // Get details from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const planId = urlParams.get('id');
-        const phone = urlParams.get('phone');
-        const ticketCode = urlParams.get('ticket_code');
-
-        // Plan details mapping
-        const planDetails = {
-            'daily': {
-                duration: '1 Day',
-                validUntil: getValidUntil(1)
-            },
-            'weekly': {
-                duration: '1 Week',
-                validUntil: getValidUntil(7)
-            },
-            'monthly': {
-                duration: '1 Month',
-                validUntil: getValidUntil(30)
-            }
-        };
-
-        // Update details on page load
-        window.onload = function() {
-            if (planId && planDetails[planId]) {
-                document.getElementById('plan-duration').textContent = planDetails[planId].duration;
-                document.getElementById('valid-until').textContent = planDetails[planId].validUntil;
-            }
-            if (ticketCode) {
-                document.getElementById('wifi-code').textContent = ticketCode;
-            }
-        };
-
-        function getValidUntil(days) {
-            const date = new Date();
-            date.setDate(date.getDate() + days);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
         function copyWifiCode() {
             const wifiCode = document.getElementById('wifi-code').textContent;
             if (wifiCode) {
