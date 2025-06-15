@@ -19,7 +19,7 @@ def buy_ticket():
         plan = data.get("plan")
         price = 0
         if plan == "daily":
-            price = 1
+            price = 25
         elif plan == "weekly":
             price = 150
         elif plan == "monthly":
