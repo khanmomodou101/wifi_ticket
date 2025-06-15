@@ -25,17 +25,33 @@ def buy_ticket():
         elif plan == "monthly":
             price = 350
 
+        # Get a random Raw Code document with status Unused
+        raw_codes = frappe.get_all("Raw Code", 
+            {"status": "Unused"},
+            ["name", "password"]
+        )
+        if not raw_codes:
+            return {
+                "status": "error",
+                "message": "No unused WiFi codes available"
+            }
+        random_code = random.choice(raw_codes)
        
         ticket.phone = data.get("phone")
         ticket.payment_method = "wave"
         ticket.reference_id = reference_id
-        ticket.ticket_code = random.randint(100000, 999999)
+        ticket.ticket_code = random_code.password
         
         if data.get("payment_method") == "wave":
             payment = initialize_payment_for_event(price, reference_id)
             if payment.get("success"):
                 ticket.wave_payment_link = payment.get("wave_launch_url")
                 ticket.wave_session_id = payment.get("session_id")
+                
+                # Update Raw Code status to Used
+                raw_code_doc = frappe.get_doc("Raw Code", random_code.name)
+                raw_code_doc.status = "Used"
+                raw_code_doc.save(ignore_permissions=True)
                 
                 ticket.insert(ignore_permissions=True)
                 frappe.db.commit()
@@ -52,6 +68,11 @@ def buy_ticket():
                     "message": "Error in purchasing ticket"
                 }
         else:
+            # Update Raw Code status to Used
+            raw_code_doc = frappe.get_doc("Raw Code", random_code.name)
+            raw_code_doc.status = "Used"
+            raw_code_doc.save(ignore_permissions=True)
+            
             ticket.insert(ignore_permissions=True)
             frappe.db.commit()
             return {

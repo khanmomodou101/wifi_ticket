@@ -1,6 +1,7 @@
 import frappe
-
+import random
 import requests
+from frappe.utils import random_string
 
 
 
@@ -56,3 +57,63 @@ Ceesay Net Team"""
 
 
                 
+@frappe.whitelist(allow_guest=True)
+def buy_ticket():
+    try:
+        data = frappe.form_dict
+        
+        ticket = frappe.new_doc("Wifi Ticket")
+        reference_id = random_string(40)
+        plan = data.get("plan")
+        price = 0
+        if plan == "daily":
+            price = 1
+        elif plan == "weekly":
+            price = 150
+        elif plan == "monthly":
+            price = 350
+
+        # Get a random Raw Code document with status Unused
+        raw_codes = frappe.get_all("Raw Code", 
+            {"status": "Unused"},
+            ["name", "password"]
+        )
+        if not raw_codes:
+            return {
+                "status": "error",
+                "message": "No unused WiFi codes available"
+            }
+        random_code = random.choice(raw_codes)
+       
+        ticket.phone = data.get("phone")
+        ticket.payment_method = "cash"  # Changed to cash since we're not using wave
+        ticket.reference_id = reference_id
+        ticket.ticket_code = random_code.password
+        ticket.payment_status = "Paid"  # Set as paid since we're not using wave
+        
+        # Update Raw Code status to Used
+        raw_code_doc = frappe.get_doc("Raw Code", random_code.name)
+        raw_code_doc.status = "Used"
+        raw_code_doc.save(ignore_permissions=True)
+        
+        # Insert ticket
+        ticket.insert(ignore_permissions=True)
+        frappe.db.commit()
+        
+        # Send SMS with the code
+        if ticket.phone:
+            send_sms(ticket.phone, ticket.ticket_code)
+        
+        return {
+            "status": "success",
+            "message": "Ticket purchased successfully",
+            "ticket_id": ticket.name,
+            "reference_id": ticket.reference_id
+        }
+            
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Error in buying ticket")
+        return {
+            "status": "error",
+            "message": "Error in purchasing ticket"
+        }
