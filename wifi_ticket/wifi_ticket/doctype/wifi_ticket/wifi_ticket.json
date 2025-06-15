@@ -98,14 +98,13 @@
   {
    "fieldname": "agent",
    "fieldtype": "Data",
-   "label": "Agent",
-   "read_only": 1
+   "label": "Agent"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-15 16:06:37.783733",
+ "modified": "2025-06-15 16:17:05.082441",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Wifi Ticket",
