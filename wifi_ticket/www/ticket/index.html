@@ -181,7 +181,6 @@
             <div class="ticket-card{% if plan.count == 0 %} disabled{% endif %}">
                 <div class="duration">{{ plan.duration }}</div>
                 <div class="price">{{ plan.price }}</div>
-                <div style="margin-bottom:10px;">{{ plan.count }} Available</div>
                 <button class="buy-button" 
                         onclick="window.location.href='/ticket/buy?id={{ plan.name }}'"
                         {% if plan.count == 0 %}disabled style="background:#ccc;cursor:not-allowed;"{% endif %}>
