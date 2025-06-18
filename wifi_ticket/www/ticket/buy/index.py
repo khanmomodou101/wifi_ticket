@@ -11,9 +11,11 @@ def get_context(context):
     settings = frappe.get_doc("Wifi Settings")
     wifi_plans = frappe.get_all("Wifi Plan", {"enabled": 1}, ["*"])
     plan = frappe.get_doc("Wifi Plan", id)
+    
     context.plans = wifi_plans
     context.settings = settings
     context.plan = plan
+    
     
 
    

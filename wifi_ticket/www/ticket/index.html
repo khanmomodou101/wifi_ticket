@@ -76,6 +76,11 @@
             background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
         }
 
+        .ticket-card.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
         .duration {
             font-size: 28px;
             font-weight: 600;
@@ -114,6 +119,11 @@
         .buy-button:hover {
             background: #2980b9;
             transform: translateY(-2px);
+        }
+
+        .buy-button.disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .selected-ticket {
@@ -168,10 +178,15 @@
         
         <div class="ticket-options">
             {% for plan in plans %}
-            <div class="ticket-card">
-                <div class="duration">{{ plan.name }}</div>
+            <div class="ticket-card{% if plan.count == 0 %} disabled{% endif %}">
+                <div class="duration">{{ plan.duration }}</div>
                 <div class="price">{{ plan.price }}</div>
-                <button class="buy-button" onclick="window.location.href='/ticket/buy?id={{ plan.name }}'">Select Plan</button>
+                <div style="margin-bottom:10px;">{{ plan.count }} Available</div>
+                <button class="buy-button" 
+                        onclick="window.location.href='/ticket/buy?id={{ plan.name }}'"
+                        {% if plan.count == 0 %}disabled style="background:#ccc;cursor:not-allowed;"{% endif %}>
+                    {% if plan.count == 0 %}Sold Out{% else %}Select Plan{% endif %}
+                </button>
             </div>
         {% endfor %}
            
