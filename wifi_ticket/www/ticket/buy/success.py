@@ -6,7 +6,9 @@ from wifi_ticket.utils import send_sms
 
 def get_context(context):
     # Clear cache before processing
-    frappe.clear_cache()
+    context.no_cache = True
+    settings = frappe.get_doc("Wifi Settings")
+    context.settings = settings
     
     reference_id = frappe.request.args.get('ref')
     if reference_id:
