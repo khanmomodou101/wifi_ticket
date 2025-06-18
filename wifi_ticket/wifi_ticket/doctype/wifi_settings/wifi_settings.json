@@ -9,7 +9,10 @@
   "column_break_hajg",
   "phone_no",
   "section_break_npyy",
-  "description"
+  "description",
+  "section_break_ungw",
+  "success_url",
+  "error_url"
  ],
  "fields": [
   {
@@ -40,13 +43,27 @@
    "in_list_view": 1,
    "label": "Description",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_ungw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "success_url",
+   "fieldtype": "Data",
+   "label": "Success URL"
+  },
+  {
+   "fieldname": "error_url",
+   "fieldtype": "Data",
+   "label": "Error URL "
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-06-18 13:10:23.134271",
+ "modified": "2025-06-18 15:44:58.164786",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Wifi Settings",

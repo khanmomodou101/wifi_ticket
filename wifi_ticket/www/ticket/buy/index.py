@@ -95,8 +95,9 @@ def buy_ticket():
 @frappe.whitelist(allow_guest=True)
 def initialize_payment_for_event(amount, reference_id):
     try:
-        success_url = f"https://www.ceesay.net/ticket/buy/success?ref={reference_id}"
-        error_url = f"https://www.ceesay.net/ticket/buy/error?ref={reference_id}"
+        settings = frappe.get_doc("Wifi Settings")
+        success_url = f"{settings.success_url}?ref={reference_id}"
+        error_url = f"{settings.error_url}?ref={reference_id}"
         response = initialize_payment(amount, reference_id, success_url, error_url)
         return response
 
