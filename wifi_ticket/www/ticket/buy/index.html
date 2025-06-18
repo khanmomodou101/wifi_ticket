@@ -152,11 +152,11 @@
             <h2>Selected Plan Details</h2>
             <div class="detail-row">
                 <span class="detail-label">Duration</span>
-                <span class="detail-value" id="plan-duration"></span>
+                <span class="detail-value">{{ plan.duration }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Price</span>
-                <span class="detail-value" id="plan-price"></span>
+                <span class="detail-value">{{ plan.price }} Dalasis</span>
             </div>
         </div>
 
@@ -169,34 +169,51 @@
         </form>
     </div>
 
+    <!-- Hidden data container for JavaScript -->
+    <div id="plan-data" 
+         data-plan-name="{{ plan.name }}" 
+         data-plan-duration="{{ plan.name }}" 
+         data-plan-price="{{ plan.price }}" 
+         style="display: none;">
+    </div>
+
     <script>
         // Get plan details from URL
         const urlParams = new URLSearchParams(window.location.search);
         const planId = urlParams.get('id');
-
-        // Plan details mapping
-        const planDetails = {
-            'daily': {
-                duration: '1 Day',
-                price: '25 Dalasis'
-            },
-            'weekly': {
-                duration: '1 Week',
-                price: '150 Dalasis'
-            },
-            'monthly': {
-                duration: '1 Month',
-                price: '350 Dalasis'
-            }
+        
+        // Get plan data from hidden data container
+        const planDataElement = document.getElementById('plan-data');
+        const selectedPlan = {
+            name: planDataElement.getAttribute('data-plan-name'),
+            duration: planDataElement.getAttribute('data-plan-duration'),
+            price: parseFloat(planDataElement.getAttribute('data-plan-price'))
         };
 
         // Update plan details on page load
         window.onload = function() {
-            if (planId && planDetails[planId]) {
-                document.getElementById('plan-duration').textContent = planDetails[planId].duration;
-                document.getElementById('plan-price').textContent = planDetails[planId].price;
+            console.log('Plan ID from URL:', planId);
+            console.log('Selected plan:', selectedPlan);
+            
+            if (planId && selectedPlan.name) {
+                // Plan details are already displayed via Jinja templating
+                console.log('Plan loaded successfully');
             } else {
-                window.location.href = '../index.html';
+                // Show error message if no plan found
+                const container = document.querySelector('.container');
+                container.innerHTML = `
+                    <div class="header">
+                        <div class="provider-name">Ceesay Net</div>
+                    </div>
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <h2>Invalid Plan</h2>
+                        <p>No valid plan selected. Please go back and select a plan.</p>
+                        <p>Received plan ID: "${planId || 'none'}"</p>
+                        <button onclick="window.location.href='../index.html'" style="margin-top: 20px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Go Back to Plans
+                        </button>
+                    </div>
+                `;
             }
         };
 
@@ -223,14 +240,14 @@
                         window.location.href = response.message.wave_payment_link;
                     } else {
                         // Show error message
-                        alert('Error processing payment. Please try again.');
+                        alert(response.message && response.message.message ? response.message.message : 'Error processing payment. Please try again.');
                         submitButton.disabled = false;
                         submitButton.textContent = 'Complete Purchase';
                     }
                 },
                 error: function(err) {
                     console.error('Error:', err);
-                    alert('Error processing payment. Please try again.');
+                    alert(response.message && response.message.message ? response.message.message : 'Error processing payment. Please try again.');
                     submitButton.disabled = false;
                     submitButton.textContent = 'Complete Purchase';
                 }

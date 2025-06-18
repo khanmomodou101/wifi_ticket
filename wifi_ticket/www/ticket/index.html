@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ceesay Net - WiFi Ticket Purchase</title>
+    <title>{{ settings.company_name }} - WiFi Ticket Purchase</title>
     <style>
         * {
             margin: 0;
@@ -160,28 +160,21 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="provider-name">Ceesay Net</div>
-            <div class="subtitle">High-Speed WiFi Solutions</div>
+            <div class="provider-name">{{ settings.company_name }}</div>
+            <div class="subtitle">{{ settings.description }}</div>
         </div>
+        
 
+        
         <div class="ticket-options">
+            {% for plan in plans %}
             <div class="ticket-card">
-                <div class="duration">1 Day</div>
-                <div class="price">25</div>
-                <button class="buy-button" onclick="window.location.href='/ticket/buy?id=daily'">Select Plan</button>
+                <div class="duration">{{ plan.name }}</div>
+                <div class="price">{{ plan.price }}</div>
+                <button class="buy-button" onclick="window.location.href='/ticket/buy?id={{ plan.name }}'">Select Plan</button>
             </div>
-
-            <div class="ticket-card">
-                <div class="duration">1 Week</div>
-                <div class="price">150</div>
-                <button class="buy-button" onclick="window.location.href='/ticket/buy?id=weekly'">Select Plan</button>
-            </div>
-
-            <div class="ticket-card">
-                <div class="duration">1 Month</div>
-                <div class="price">350</div>
-                <button class="buy-button" onclick="window.location.href='/ticket/buy?id=monthly'">Select Plan</button>
-            </div>
+        {% endfor %}
+           
         </div>
 
         <div id="selected-ticket" class="selected-ticket">
