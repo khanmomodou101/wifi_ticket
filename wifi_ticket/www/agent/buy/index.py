@@ -5,10 +5,6 @@ import random
 
 def get_context(context):
     context.no_cache = True
-    if frappe.session.user == "Guest":
-        frappe.redirect(/login)
-
-    
     id = frappe.request.args.get("id")
     settings = frappe.get_doc("Wifi Settings")
     wifi_plans = frappe.get_all("Wifi Plan", {"enabled": 1}, ["*"])
@@ -26,10 +22,22 @@ def get_context(context):
 def buy_ticket():
     try:
         data = frappe.form_dict
+        agent_code = data.get("agent_code")
+        if not agent_code:
+            return {
+                "status": "error",
+                "message": "Agent code is required."
+            }
+        # Check if agent code exists in Agent doctype
+        agent_name = frappe.db.get_value("Agent", {"code": agent_code}, "name")
+        if not agent_name:
+            return {
+                "status": "error",
+                "message": "Invalid agent code. Please check and try again."
+            }
         ticket = frappe.new_doc("Wifi Ticket")
         reference_id = random_string(40)
         plan_id = data.get("plan")
-
         # Get the plan details from database
         plan = frappe.get_doc("Wifi Plan", plan_id)
         if not plan:
@@ -37,7 +45,6 @@ def buy_ticket():
                 "status": "error",
                 "message": "Invalid plan selected"
             }
-
         # Get a random Raw Code document with status Unused and matching plan
         raw_codes = frappe.get_all("Raw Code", 
             {"profile": plan_id},
@@ -49,14 +56,12 @@ def buy_ticket():
                 "message": "No unused WiFi codes available"
             }
         random_code = random.choice(raw_codes)
-
         ticket.phone = data.get("phone")
         ticket.payment_method = "cash"
         ticket.reference_id = reference_id
         ticket.ticket_code = random_code.password
         ticket.plan = plan_id
-        ticket.agent = frappe.db.get_value("User", frappe.session.user, "full_name")
-
+        ticket.agent = agent_name
         # Save the ticket and mark code as used
         ticket.insert(ignore_permissions=True)
         frappe.delete_doc("Raw Code", random_code.name)

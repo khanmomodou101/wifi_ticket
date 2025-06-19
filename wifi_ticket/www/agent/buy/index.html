@@ -146,7 +146,7 @@
     <div class="container">
         <div class="header">
             <div class="provider-name">Ceesay Net</div>
-            <div style="background: #3498db; color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-top: 10px;">Agent Mode {{frappe.db.get_value("User", frappe.session.user, "full_name")}}</div>
+            <div style="background: #3498db; color: white; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-top: 10px;">Agent Mode </div>
         </div>
 
         <div class="plan-details">
@@ -165,6 +165,10 @@
             <div class="form-group">
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required pattern="[0-9]{7,10}">
+            </div>
+            <div class="form-group">
+                <label for="agent_code">Agent Code</label>
+                <input type="text" id="agent_code" name="agent_code" placeholder="Enter your agent code" required>
             </div>
             <button type="submit" class="submit-button">Complete Purchase</button>
         </form>
@@ -221,6 +225,7 @@
         function handleSubmit(event) {
             event.preventDefault();
             const phone = document.getElementById('phone').value;
+            const agent_code = document.getElementById('agent_code').value;
             const submitButton = document.querySelector('.submit-button');
             
             // Disable button and show loading state
@@ -233,22 +238,31 @@
                 args: {
                     phone: phone,
                     plan: planId,
-                    payment_method: 'cash'
+                    payment_method: 'cash',
+                    agent_code: agent_code
                 },
                 callback: function(response) {
                     if (response.message && response.message.status === 'success') {
                         // Redirect to agent success page
                         window.location.href = `/agent/buy/success?ref=${response.message.reference_id}`;
                     } else {
-                        // Show error message
-                        alert(response.message && response.message.message ? response.message.message : 'Error processing purchase. Please try again.');
+                        // Show error message using frappe.msgprint
+                        frappe.msgprint({
+                            message: response.message && response.message.message ? response.message.message : 'Error processing purchase. Please try again.',
+                            indicator: 'red',
+                            title: 'Error'
+                        });
                         submitButton.disabled = false;
                         submitButton.textContent = 'Complete Purchase';
                     }
                 },
                 error: function(err) {
                     console.error('Error:', err);
-                    alert('Error processing purchase. Please try again.');
+                    frappe.msgprint({
+                        message: 'Error processing purchase. Please try again.',
+                        indicator: 'red',
+                        title: 'Error'
+                    });
                     submitButton.disabled = false;
                     submitButton.textContent = 'Complete Purchase';
                 }

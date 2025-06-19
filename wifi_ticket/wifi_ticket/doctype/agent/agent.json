@@ -1,13 +1,13 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:AG-{###}",
+ "autoname": "field:code",
  "creation": "2025-06-18 17:13:29.964773",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "full_name",
-  "agent_code",
+  "code",
   "phone_no"
  ],
  "fields": [
@@ -17,25 +17,25 @@
    "label": "Full Name"
   },
   {
-   "fieldname": "agent_code",
-   "fieldtype": "Data",
-   "label": "Agent Code",
-   "unique": 1
-  },
-  {
    "fieldname": "phone_no",
    "fieldtype": "Data",
    "label": "Phone No"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "label": "Agent Code",
+   "unique": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-18 17:33:18.051686",
+ "modified": "2025-06-19 16:21:28.333787",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Agent",
- "naming_rule": "Expression",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

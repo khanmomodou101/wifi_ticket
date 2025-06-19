@@ -120,7 +120,6 @@ def buy_ticket():
 
 @frappe.whitelist()
 def create_agents():
-    # List of agents with full names
     agents = [
         "Muhammed Keema",
         "Karamo Njie",
@@ -136,28 +135,18 @@ def create_agents():
         "Muhammed Boutique",
         "Manjai"
     ]
-
-    # Loop and create users
-    for idx, full_name in enumerate(agents):
-        # Generate email
-        email = f"ag{idx + 1:03}@ceesay.net"
-        
-        # Split first and last names
-        parts = full_name.split()
-        first_name = parts[0]
-        last_name = parts[1] if len(parts) > 1 else ""
-
-        # Check if user already exists
-        if frappe.db.exists("User", email):
-            frappe.msgprint(f"User {email} already exists")
-            continue
-
-        # Create user
-        user = frappe.new_doc("User")
-        user.email = email
-        user.first_name = first_name
-        user.last_name = last_name
-        user.new_password = email
-        user.insert(ignore_permissions=True)
+    created = []
+    for full_name in agents:
+        # Generate a unique random 4-digit code
+        while True:
+            code = f"{random.randint(1000, 9999)}"
+            if not frappe.db.exists("Agent", {"code": code}):
+                break
+        agent = frappe.new_doc("Agent")
+        agent.code = code
+        agent.full_name = full_name
+        agent.insert(ignore_permissions=True)
+        created.append(code)
     frappe.db.commit()
-    return True
+    return {"created": created, "message": f"Created {len(created)} agents."}
+
