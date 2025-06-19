@@ -117,3 +117,47 @@ def buy_ticket():
             "status": "error",
             "message": "Error in purchasing ticket"
         }
+
+@frappe.whitelist()
+def create_agents():
+    # List of agents with full names
+    agents = [
+        "Muhammed Keema",
+        "Karamo Njie",
+        "Musa",
+        "Madi Ceesay",
+        "Shiekh Omar",
+        "Aminata",
+        "Narr",
+        "Mama Jah",
+        "Fatoumatta Jawara",
+        "Seedy Sillah",
+        "Abdourahman",
+        "Muhammed Boutique",
+        "Manjai"
+    ]
+
+    # Loop and create users
+    for idx, full_name in enumerate(agents):
+        # Generate email
+        email = f"ag{idx + 1:03}@ceesay.net"
+        
+        # Split first and last names
+        parts = full_name.split()
+        first_name = parts[0]
+        last_name = parts[1] if len(parts) > 1 else ""
+
+        # Check if user already exists
+        if frappe.db.exists("User", email):
+            frappe.msgprint(f"User {email} already exists")
+            continue
+
+        # Create user
+        user = frappe.new_doc("User")
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.new_password = email
+        user.insert(ignore_permissions=True)
+    frappe.db.commit()
+    return True
