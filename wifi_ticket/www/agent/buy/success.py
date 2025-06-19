@@ -5,9 +5,7 @@ from smart_subscription.config import check_payment_status
 from wifi_ticket.utils import send_sms
 
 def get_context(context):
-    if frappe.session.user == "Guest":
-        frappe.redirect("/login")
-    # Clear cache before processing
+    
     context.no_cache = True
     settings = frappe.get_doc("Wifi Settings")
     context.settings = settings
