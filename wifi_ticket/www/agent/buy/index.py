@@ -7,7 +7,6 @@ def get_context(context):
         frappe.local.response["type"] = "redirect"
         frappe.local.response["location"] = "/login"
         return
-    frappe.clear_cache()
     
     ticket_id = frappe.request.args.get("id")
     agent_code = frappe.request.args.get("agent_code")
