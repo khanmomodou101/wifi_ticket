@@ -1,82 +1,87 @@
 import frappe
 from frappe.utils import random_string
+from smart_subscription.config import initialize_payment
 import random
 
 def get_context(context):
-    if frappe.session.user == "Guest":
-        frappe.local.response["type"] = "redirect"
-        frappe.local.response["location"] = "/login"
-        return
+    context.no_cache = True
+
     
-    ticket_id = frappe.request.args.get("id")
-    agent_code = frappe.request.args.get("agent_code")
-    plan = frappe.get_doc("Wifi Plan", ticket_id)
+    id = frappe.request.args.get("id")
+    settings = frappe.get_doc("Wifi Settings")
+    wifi_plans = frappe.get_all("Wifi Plan", {"enabled": 1}, ["*"])
+    plan = frappe.get_doc("Wifi Plan", id)
+    
+    context.plans = wifi_plans
+    context.settings = settings
     context.plan = plan
-    context.agent_code = agent_code
+    
+    
+
+   
 
 @frappe.whitelist(allow_guest=True)
 def buy_ticket():
     try:
         data = frappe.form_dict
-
-        agent_code = data.get("agent_code")
-        if not frappe.db.exists("Agent", {"code": agent_code}):
-            return {
-                "status": "error",
-                "message": "Invalid agent code. Please check and try again."
-            }
-
         ticket = frappe.new_doc("Wifi Ticket")
         reference_id = random_string(40)
-        plan = data.get("plan")
+        plan_id = data.get("plan")
 
-        # Get a single random unused Raw Code
-        raw_code = frappe.db.sql("""
-            SELECT name, password FROM `tabRaw Code`
-            WHERE status='Unused'
-            LIMIT 1
-        """, as_dict=True)
-        if not raw_code:
+        # Get the plan details from database
+        plan = frappe.get_doc("Wifi Plan", plan_id)
+        if not plan:
+            return {
+                "status": "error",
+                "message": "Invalid plan selected"
+            }
+
+        # Get a random Raw Code document with status Unused and matching plan
+        raw_codes = frappe.get_all("Raw Code", 
+            {"profile": plan_id},
+            ["name", "password"]
+        )
+        if not raw_codes:
             return {
                 "status": "error",
                 "message": "No unused WiFi codes available"
             }
-        raw_code = raw_code[0]
+        random_code = random.choice(raw_codes)
 
         ticket.phone = data.get("phone")
         ticket.payment_method = "cash"
         ticket.reference_id = reference_id
-        ticket.ticket_code = raw_code["password"]
-        ticket.payment_status = "Paid"
-        ticket.agent = frappe.db.get_value("Agent", agent_code, "name")
+        ticket.ticket_code = random_code.password
+        ticket.plan = plan_id
+        ticket.agent = frappe.db.get_value("User", frappe.session.user, "full_name")
 
-        # Mark code as used (faster than get_doc + save)
-        frappe.db.set_value("Raw Code", raw_code["name"], "status", "Used")
-
-        # Insert ticket
+        # Save the ticket and mark code as used
         ticket.insert(ignore_permissions=True)
+        frappe.delete_doc("Raw Code", random_code.name)
         frappe.db.commit()
-
         return {
             "status": "success",
-            "message": "WiFi code generated successfully",
+            "message": "Ticket purchased successfully",
             "ticket_id": ticket.name,
-            "ticket_code": ticket.ticket_code,
             "reference_id": ticket.reference_id
         }
-
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "Error in generating WiFi code")
+        frappe.log_error(frappe.get_traceback(), "Error in buying ticket")
         return {
             "status": "error",
-            "message": "Error in generating WiFi code"
+            "message": "Error in purchasing ticket"
         }
-    
+
 
     
 @frappe.whitelist(allow_guest=True)
-def verify_agent_code(agent_code):
-    if frappe.db.exists("Agent", {"code": agent_code}):
-        return True
-    else:
-        return False
+def initialize_payment_for_event(amount, reference_id):
+    try:
+        settings = frappe.get_doc("Wifi Settings")
+        success_url = f"{settings.success_url}/ticket/buy/success?ref={reference_id}"
+        error_url = f"{settings.error_url}/ticket/buy/error?ref={reference_id}"
+        response = initialize_payment(amount, reference_id, success_url, error_url)
+        return response
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Error in initializing payment for event")

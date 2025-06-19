@@ -39,6 +39,8 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Phone"
   },
   {
@@ -48,6 +50,8 @@
   {
    "fieldname": "ticket_code",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Ticket Code"
   },
   {
@@ -75,6 +79,8 @@
   {
    "fieldname": "payment_status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Payment Status",
    "options": "Unpaid\nPaid\nFailed",
    "read_only": 1
@@ -97,15 +103,16 @@
   },
   {
    "fieldname": "agent",
-   "fieldtype": "Link",
-   "label": "Agent",
-   "options": "Agent"
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Agent"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-18 17:28:58.268593",
+ "modified": "2025-06-19 15:41:59.053823",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Wifi Ticket",

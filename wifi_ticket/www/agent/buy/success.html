@@ -1,16 +1,9 @@
-{% extends "templates/web.html" %}
-
-{% block header %}{% endblock %}
-{% block navbar %}{% endblock %}
-{% block footer %}{% endblock %}
-
-{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ceesay Net - Purchase Successful</title>
+    <title>{{ settings.company_name }} - Purchase Successful</title>
     <style>
         * {
             margin: 0;
@@ -176,11 +169,11 @@
             </svg>
         </div>
 
-        <h1 class="success-title">WiFi Code Generated!</h1>
-        <p class="success-message">The WiFi code has been sent to the recipient's phone number.</p>
+        <h1 class="success-title">Purchase Successful!</h1>
+        <p class="success-message">Your WiFi ticket has been activated successfully.</p>
 
         <div class="wifi-code-container">
-            <div class="wifi-code-label">WiFi Code</div>
+            <div class="wifi-code-label">Your WiFi Code</div>
             <div class="wifi-code" id="wifi-code">{{ ticket_code }}</div>
             <button class="copy-button" onclick="copyWifiCode()">
                 <svg viewBox="0 0 24 24">
@@ -193,32 +186,70 @@
         <div class="plan-details">
             <div class="detail-row">
                 <span>Plan Duration</span>
-                <span class="detail-value">{{ ticket.ticket_type }}</span>
+                <span class="detail-value" id="plan-duration">1 Day</span>
             </div>
             <div class="detail-row">
-                <span>Phone Number</span>
-                <span class="detail-value">{{ ticket.phone }}</span>
+                <span>Valid Until</span>
+                <span class="detail-value" id="valid-until">2024-03-21 23:59</span>
             </div>
         </div>
 
-        <a href="/agent" class="home-button">Back to Home</a>
+        <a href"/agent" class="home-button">Back to Home</a>
     </div>
 
     <script>
+        // Get plan details from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planId = urlParams.get('id');
+        const phone = urlParams.get('phone');
+
+        // Plan details mapping
+        const planDetails = {
+            'daily': {
+                duration: '1 Day',
+                validUntil: getValidUntil(1)
+            },
+            'weekly': {
+                duration: '1 Week',
+                validUntil: getValidUntil(7)
+            },
+            'monthly': {
+                duration: '1 Month',
+                validUntil: getValidUntil(30)
+            }
+        };
+
+        // Update plan details on page load
+        window.onload = function() {
+            if (planId && planDetails[planId]) {
+                document.getElementById('plan-duration').textContent = planDetails[planId].duration;
+                document.getElementById('valid-until').textContent = planDetails[planId].validUntil;
+            }
+        };
+
+        function getValidUntil(days) {
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         function copyWifiCode() {
             const wifiCode = document.getElementById('wifi-code').textContent;
-            if (wifiCode) {
-                navigator.clipboard.writeText(wifiCode).then(() => {
-                    const button = document.querySelector('.copy-button');
-                    const originalText = button.innerHTML;
-                    button.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>Copied!';
-                    setTimeout(() => {
-                        button.innerHTML = originalText;
-                    }, 2000);
-                });
-            }
+            navigator.clipboard.writeText(wifiCode).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
         }
     </script>
 </body>
 </html>
-{% endblock %}
