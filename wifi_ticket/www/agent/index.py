@@ -2,6 +2,8 @@ import frappe
 
 def get_context(context):
     context.no_cache = True
+    if frappe.session.user == "Guest":
+        frappe.redirect("/login")
     settings = frappe.get_doc("Wifi Settings")
     wifi_plans = frappe.get_all("Wifi Plan", {"enabled": 1}, ["name", "price", "duration"], order_by="price asc")
     plans = []

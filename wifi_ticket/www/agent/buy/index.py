@@ -5,6 +5,8 @@ import random
 
 def get_context(context):
     context.no_cache = True
+    if frappe.session.user == "Guest":
+        frappe.redirect(/login)
 
     
     id = frappe.request.args.get("id")
