@@ -13,39 +13,38 @@ def get_context(context):
     reference_id = frappe.request.args.get('ref')
     if reference_id:
         try:
-            if not frappe.db.exists('Wifi Ticket', {'reference_id': reference_id}):
-                frappe.throw("Ticket not found")
+            if  frappe.db.exists('Wifi Ticket', {'reference_id': reference_id}):
             
-            ticket = frappe.get_doc('Wifi Ticket', {'reference_id': reference_id})
+                ticket = frappe.get_doc('Wifi Ticket', {'reference_id': reference_id})
             
             
             # Add logging to debug payment status
-            frappe.logger().debug(f"Checking payment status for ticket: {ticket.name}")
-            frappe.logger().debug(f"Wave session ID: {ticket.wave_session_id}")
-            
-            payment_status = check_payment_status(ticket.wave_session_id)
-            frappe.logger().debug(f"Payment status response: {payment_status}")
+                frappe.logger().debug(f"Checking payment status for ticket: {ticket.name}")
+                frappe.logger().debug(f"Wave session ID: {ticket.wave_session_id}")
+                
+                payment_status = check_payment_status(ticket.wave_session_id)
+                frappe.logger().debug(f"Payment status response: {payment_status}")
 
-            if payment_status.get("success") and payment_status.get("payment_status").lower() == "succeeded":
-                frappe.logger().debug(f"Setting payment status to Paid for ticket: {ticket.name}")
-                
-                # Update ticket status
-                ticket.db_set('payment_status', 'Paid')
-                frappe.db.commit()
-                
-                frappe.logger().debug("Payment status updated successfully")
-                
-                # Send SMS with WiFi code
-                try:
-                    sms_response = send_sms(ticket.phone, ticket.ticket_code)
-                    frappe.logger().debug(f"SMS sending response: {sms_response}")
-                except Exception as e:
-                    frappe.log_error(f"Error sending SMS: {str(e)}", "SMS Error")
-            else:
-                frappe.log_error(f"Payment not successful. Status: {payment_status.get('payment_status')}")
-                frappe.logger().debug(f"Payment not successful. Status: {payment_status.get('payment_status')}")
+                if payment_status.get("success") and payment_status.get("payment_status").lower() == "succeeded":
+                    frappe.logger().debug(f"Setting payment status to Paid for ticket: {ticket.name}")
+                    
+                    # Update ticket status
+                    ticket.db_set('payment_status', 'Paid')
+                    frappe.db.commit()
+                    
+                    frappe.logger().debug("Payment status updated successfully")
+                    
+                    # Send SMS with WiFi code
+                    try:
+                        sms_response = send_sms(ticket.phone, ticket.ticket_code)
+                        frappe.logger().debug(f"SMS sending response: {sms_response}")
+                    except Exception as e:
+                        frappe.log_error(f"Error sending SMS: {str(e)}", "SMS Error")
+                else:
+                    frappe.log_error(f"Payment not successful. Status: {payment_status.get('payment_status')}")
+                    frappe.logger().debug(f"Payment not successful. Status: {payment_status.get('payment_status')}")
         except Exception as e:
-            frappe.log_error(f"Error processing ticket: {str(e)}", "Ticket Processing Error")
+            frappe.log_error(f"{frappe.get_traceback()}", "Ticket Processing Error")
             ticket = None
     else:
         ticket = None
