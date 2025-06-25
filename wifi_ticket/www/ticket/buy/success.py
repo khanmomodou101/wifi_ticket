@@ -52,6 +52,7 @@ def get_context(context):
 
     context.ticket = ticket
     context.ticket_code = frappe.db.get_value("Wifi Ticket", {"reference_id": reference_id}, "ticket_code")
+    context.reference_id = reference_id
     return context
 
 @frappe.whitelist(allow_guest=True)
