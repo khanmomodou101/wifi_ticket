@@ -9,6 +9,7 @@ def get_context(context):
     context.no_cache = True
     settings = frappe.get_doc("Wifi Settings")
     context.settings = settings
+    ticket = None
     
     reference_id = frappe.request.args.get('ref')
     if reference_id:
