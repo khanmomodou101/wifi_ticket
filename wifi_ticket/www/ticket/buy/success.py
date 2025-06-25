@@ -12,6 +12,7 @@ def get_context(context):
     ticket = None
     
     reference_id = frappe.request.args.get('ref')
+    frappe.log_error(reference_id, "reference_id")
     if reference_id:
         try:
             if  frappe.db.exists('Wifi Ticket', {'reference_id': reference_id}):
