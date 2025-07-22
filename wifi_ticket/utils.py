@@ -31,7 +31,7 @@ Ceesay Net Team"""
         frappe.logger().debug(f"Attempting to send SMS to {phone} with WiFi code")
         
         response = requests.post(url, data={
-            "sender_id": "Jokoorsms", 
+            "sender_id": "Jokoor", 
             "phone_number": phone, 
             "message": message
         })
