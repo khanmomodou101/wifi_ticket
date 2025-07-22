@@ -13,7 +13,7 @@ def get_context(context):
     reference_id = frappe.request.args.get('ref')
     frappe.log_error(reference_id, "reference_id")
         
-    ticket = frappe.get_doc('Wifi Ticket', {'reference_id': reference_id})
+    ticket = frappe.get_doc("Wifi Ticket", {"reference_id": reference_id})
 
 
 # Add logging to debug payment status
