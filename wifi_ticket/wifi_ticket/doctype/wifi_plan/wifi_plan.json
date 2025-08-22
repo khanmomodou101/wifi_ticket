@@ -42,14 +42,14 @@
    "fieldname": "duration",
    "fieldtype": "Select",
    "label": "Duration",
-   "options": "1 Day\n1 Week\n1 Month",
+   "options": "1 Day\n1 Week\n1 Month\n4 Hours",
    "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-06-19 15:54:22.482499",
+ "modified": "2025-08-22 18:32:59.301553",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Wifi Plan",
