@@ -7,7 +7,7 @@ from frappe.utils import random_string
 
 
 @frappe.whitelist()
-def send_sms(phone, code):
+def send_sms(phone, code, profile):
     try:
         url = "https://jsms.royalsmb.com/api/method/jsms.africell.send_sms"
         
@@ -17,7 +17,7 @@ def send_sms(phone, code):
         elif phone.startswith("220"):
             phone = phone[3:]
             
-        message = f"""Thank you for choosing Ceesay Net!
+        message = f"""Thank you for choosing {profile}!
 
 Your WiFi code is: {code}
 
@@ -25,7 +25,7 @@ Please use this code to connect to our WiFi network.
 If you have any issues, please contact our support.
 
 Best regards,
-Ceesay Net Team"""
+{profile} Team"""
 
         # Log the SMS attempt
         frappe.logger().debug(f"Attempting to send SMS to {phone} with WiFi code")

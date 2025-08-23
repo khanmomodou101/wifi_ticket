@@ -38,7 +38,7 @@ def get_context(context):
                     
                     # Send SMS with WiFi code
                     try:
-                        sms_response = send_sms(ticket.phone, ticket.ticket_code)
+                        sms_response = send_sms(ticket.phone, ticket.ticket_code, settings.company_name)
                         frappe.logger().debug(f"SMS sending response: {sms_response}")
                     except Exception as e:
                         frappe.log_error(f"Error sending SMS: {str(e)}", "SMS Error")
