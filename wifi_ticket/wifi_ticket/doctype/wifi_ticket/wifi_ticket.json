@@ -19,7 +19,11 @@
   "payment_status",
   "column_break_jfoy",
   "wave_session_id",
-  "wave_payment_link"
+  "wave_payment_link",
+  "payment_settled",
+  "wave_payout_id",
+  "plan",
+  "amount"
  ],
  "fields": [
   {
@@ -33,6 +37,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Ticket Type",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -78,6 +83,7 @@
   {
    "fieldname": "payment_status",
    "fieldtype": "Select",
+   "hidden": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Payment Status",
@@ -107,12 +113,38 @@
    "in_standard_filter": 1,
    "label": "Agent",
    "options": "Agent"
+  },
+  {
+   "default": "0",
+   "fieldname": "payment_settled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Payment Settled"
+  },
+  {
+   "fieldname": "plan",
+   "fieldtype": "Link",
+   "label": "Plan",
+   "options": "Wifi Plan",
+   "read_only": 1
+  },
+  {
+   "fieldname": "wave_payout_id",
+   "fieldtype": "Data",
+   "label": "Wave Payout ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-23 14:29:19.657639",
+ "modified": "2025-11-04 23:29:14.024937",
  "modified_by": "Administrator",
  "module": "Wifi Ticket",
  "name": "Wifi Ticket",

@@ -1,6 +1,6 @@
 import frappe
 from frappe.utils import random_string
-from smart_subscription.config import initialize_payment
+from wifi_ticket.config import initialize_payment
 import random
 
 def get_context(context):
@@ -58,7 +58,8 @@ def buy_ticket():
         ticket.payment_method = "wave"
         ticket.reference_id = reference_id
         ticket.ticket_code = random_code.password
-        ticket.plan = plan_id
+        ticket.plan = plan.name
+        ticket.ticket_type = plan_id
         
         payment = initialize_payment_for_event(price, reference_id)
         if payment.get("success"):
@@ -67,7 +68,7 @@ def buy_ticket():
             
             # Update Raw Code status to Used
             ticket.insert(ignore_permissions=True)
-            frappe.delete_doc("Raw Code", random_code.name)
+            
             
             
             frappe.db.commit()

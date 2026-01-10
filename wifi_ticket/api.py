@@ -8,15 +8,15 @@ def execute_report():
         "from_date": "2025-07-01",
         "to_date": "2025-07-18",
         "group_by" : "Invoice",
-        
+
     }
     filters = frappe._dict(filters)
     columns, data = execute(filters)
-    
+
     # Process the data to get one entry per invoice
     processed_data = []
     current_invoice = None
-    
+
     for row in data:
         if row.get("indent") == 0:  # Invoice header row
             current_invoice = {
@@ -50,12 +50,12 @@ def execute_report():
                     "gross_profit": row.get("gross_profit"),
                     "gross_profit_percent": row.get("gross_profit_%")
                 })
-            
+
             # If this is the last item for this invoice, add to processed data only if it has negative items
             if current_invoice.get("invoice") != "Total" and current_invoice.get("item_count", 0) > 0:
                 processed_data.append(current_invoice)
                 current_invoice = None
-    
+
     return processed_data
 
 @frappe.whitelist()
@@ -65,7 +65,7 @@ def affected_invoice(invoice_no):
     """
     if not invoice_no:
         return {"error": "Invoice number is required"}
-    
+
     filters = {
         "company": "King Baker Foods",
         "from_date": "2025-01-01",  # Wide date range to ensure we find the invoice
@@ -75,10 +75,10 @@ def affected_invoice(invoice_no):
     }
     filters = frappe._dict(filters)
     columns, data = execute(filters)
-    
+
     # Process the data to get the specific invoice
     current_invoice = None
-    
+
     for row in data:
         if row.get("indent") == 0:  # Invoice header row
             current_invoice = {
@@ -112,10 +112,18 @@ def affected_invoice(invoice_no):
                     "gross_profit": row.get("gross_profit"),
                     "gross_profit_percent": row.get("gross_profit_%")
                 })
-    
+
     if current_invoice and current_invoice.get("item_count", 0) > 0:
         return current_invoice
     elif current_invoice:
         return {"message": f"Invoice {invoice_no} found but has no negative gross profit items"}
     else:
         return {"error": f"Invoice {invoice_no} not found"}
+
+@frappe.whitelist()
+def delte_raw_codes():
+    raw_codes = frappe.get_all("Raw Code", fields=["name", "username"])
+    for raw_code in raw_codes:
+        if frappe.db.exists("Wifi Ticket", {"ticket_code": raw_code.username}):
+            frappe.delete_doc("Raw Code", raw_code.name)
+    frappe.db.commit()
